@@ -8,7 +8,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -29,7 +33,6 @@ public class PubSubService {
 
     public void addSubscriber(Subscriber subscriber) {
         subscriberService.addSubscriber(subscriber);
-
     }
 
     public void removeSubscriber(Long subscriberId) {
@@ -39,6 +42,7 @@ public class PubSubService {
     public void broadcastMessages(Subscriber subscriber) {
         subscriberService.listenForMessages(subscriber);
     }
+
     public List<Message> getMessagesForSubscriber(Long id, String sort, String createdDate, Integer pageNo, Integer pageSize) {
         Subscriber subscriber = subscriberRepository.findById(id).orElse(null);
         if (subscriber == null) {
@@ -47,7 +51,9 @@ public class PubSubService {
 
         Pageable pageable = PageRequest.of(pageNo, pageSize);
 
-        List<Message> messages = messageRepository.findAllBySubscriber(subscriber, pageable);
+        List<Message> messages = createdDate != null
+                ? messageRepository.findAllBySubscriberAndCreatedGreaterThanEqual(subscriber ,convertStringToDate(createdDate), pageable)
+                : messageRepository.findAllBySubscriber(subscriber, pageable);
 
         if(sort.equals("desc")){
             messages.sort(Comparator.comparing(Message::getCreated).reversed());
@@ -61,5 +67,16 @@ public class PubSubService {
         Message message = new Message();
         message.setPayload(payload);
         publisherService.messageQueue.offer(message);
+    }
+
+    private Date convertStringToDate(String date) {
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Date newDate = null;
+        try {
+            newDate = dateFormat.parse(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return newDate;
     }
 }

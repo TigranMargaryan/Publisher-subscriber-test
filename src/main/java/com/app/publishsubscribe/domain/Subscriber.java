@@ -1,5 +1,6 @@
 package com.app.publishsubscribe.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
@@ -18,7 +19,8 @@ public class Subscriber {
     private long id;
     private String name;
 
-    @OneToMany(mappedBy = "subscriber")
+    @JsonIgnore
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "subscriber")
     private List<Message> messages;
 
     @CreationTimestamp
@@ -26,12 +28,4 @@ public class Subscriber {
 
     @UpdateTimestamp
     private Date updated;
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
 }
