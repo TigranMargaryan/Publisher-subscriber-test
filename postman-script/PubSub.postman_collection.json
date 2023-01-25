@@ -1,0 +1,192 @@
+{
+	"info": {
+		"_postman_id": "c6e29b19-aca2-4c20-89d7-86dad3047f8b",
+		"name": "PubSub",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "5672309"
+	},
+	"item": [
+		{
+			"name": "GET messages for subscriber",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "apiKey",
+						"value": "L91MqmCEQfaYDLEKqtqm5uQNWHEVG5L3",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"Ando\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/subscribers/1/messages?sort=asc&createdDate=2023-01-24 19:40:19",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"subscribers",
+						"1",
+						"messages"
+					],
+					"query": [
+						{
+							"key": "sort",
+							"value": "asc"
+						},
+						{
+							"key": "createdDate",
+							"value": "2023-01-24 19:40:19"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST add messages",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "apiKey",
+						"value": "L91MqmCEQfaYDLEKqtqm5uQNWHEVG5L3",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"type\": \"Game\",\r\n    \"data\": \"Mario\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/messages",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"messages"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Broadcast subscriber",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "apiKey",
+						"value": "L91MqmCEQfaYDLEKqtqm5uQNWHEVG5L3",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"Tigran\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/broadcasts",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"broadcasts"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete subscriber",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "apiKey",
+						"value": "L91MqmCEQfaYDLEKqtqm5uQNWHEVG5L3",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/api/subscribers/5",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"subscribers",
+						"5"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create subscriber",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "apiKey",
+						"value": "L91MqmCEQfaYDLEKqtqm5uQNWHEVG5L3",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"Alla\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/subscribers",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"subscribers"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
