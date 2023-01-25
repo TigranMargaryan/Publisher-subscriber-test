@@ -1,5 +1,7 @@
 package com.app.publishsubscribe.controller;
 
+import com.app.publishsubscribe.config.exception.InvalidApiKeyException;
+import com.app.publishsubscribe.config.exception.SubscriberNotFoundException;
 import com.app.publishsubscribe.domain.*;
 import com.app.publishsubscribe.service.PubSubService;
 import lombok.RequiredArgsConstructor;
@@ -26,10 +28,8 @@ public class PubSubController {
             @RequestParam(value = "sort", defaultValue = "asc") String sort,
             @RequestParam(value = "createdDate", required = false) String createdDate,
             @RequestParam(defaultValue = "0") Integer pageNo,
-            @RequestParam(defaultValue = "5") Integer pageSize) {
-        if(!API_KEY.equals(apiKey)) {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
+            @RequestParam(defaultValue = "5") Integer pageSize) throws InvalidApiKeyException {
+        checkAuthorization(apiKey);
         List<Message> messages = pubSubService.getMessagesForSubscriber(id, sort, createdDate, pageNo, pageSize);
         return new ResponseEntity<>(messages, HttpStatus.OK);
     }
@@ -41,27 +41,29 @@ public class PubSubController {
     }
 
     @PostMapping("/messages")
-    public ResponseEntity<String> addMessageToQueue(@RequestHeader("apiKey") String apiKey, @RequestBody Payload payload) {
+    public ResponseEntity<String> addMessageToQueue(@RequestHeader("apiKey") String apiKey, @RequestBody Payload payload) throws InvalidApiKeyException {
+        checkAuthorization(apiKey);
         pubSubService.addMessageToQueue(payload);
-        return unauthorized(apiKey, HttpStatus.CREATED);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @PostMapping("/broadcasts")
-    public ResponseEntity<String> broadcastMessages(@RequestHeader("apiKey") String apiKey, @RequestBody Subscriber subscriber) {
+    public ResponseEntity<String> broadcastMessages(@RequestHeader("apiKey") String apiKey, @RequestBody Subscriber subscriber) throws SubscriberNotFoundException, InvalidApiKeyException {
+        checkAuthorization(apiKey);
         pubSubService.broadcastMessages(subscriber);
-        return unauthorized(apiKey, HttpStatus.CREATED);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @DeleteMapping("/subscribers/{id}")
-    public ResponseEntity<String> removeSubscriber(@RequestHeader("apiKey") String apiKey, @PathVariable Long id) {
+    public ResponseEntity<String> removeSubscriber(@RequestHeader("apiKey") String apiKey, @PathVariable Long id) throws InvalidApiKeyException {
+        checkAuthorization(apiKey);
         pubSubService.removeSubscriber(id);
-        return unauthorized(apiKey, HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    public ResponseEntity<String> unauthorized(String apiKey, HttpStatus httpStatus) {
+    private void checkAuthorization(String apiKey) throws InvalidApiKeyException {
             if (!API_KEY.equals(apiKey)) {
-                return new ResponseEntity<>("Invalid API key", HttpStatus.UNAUTHORIZED);
+                throw new InvalidApiKeyException("Invalid API key");
             }
-        return new ResponseEntity<>(httpStatus);
     }
 }

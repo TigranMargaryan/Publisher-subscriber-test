@@ -1,5 +1,6 @@
 package com.app.publishsubscribe.service;
 
+import com.app.publishsubscribe.config.exception.SubscriberNotFoundException;
 import com.app.publishsubscribe.domain.*;
 import com.app.publishsubscribe.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +27,7 @@ public class PubSubService {
         subscriberService.removeSubscriber(subscriberId);
     }
 
-    public void broadcastMessages(Subscriber subscriber) {
+    public void broadcastMessages(Subscriber subscriber) throws SubscriberNotFoundException {
         subscriberService.listenForMessages(subscriber);
     }
 

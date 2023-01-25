@@ -1,4 +1,4 @@
-package com.app.publishsubscribe.config;
+package com.app.publishsubscribe.config.exception;
 
 import org.slf4j.*;
 import org.springframework.http.*;

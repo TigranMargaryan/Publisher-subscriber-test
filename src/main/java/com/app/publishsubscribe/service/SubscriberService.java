@@ -1,5 +1,6 @@
 package com.app.publishsubscribe.service;
 
+import com.app.publishsubscribe.config.exception.SubscriberNotFoundException;
 import com.app.publishsubscribe.domain.*;
 import com.app.publishsubscribe.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +29,7 @@ public class SubscriberService {
         subscriberRepository.deleteById(subscriberId);
     }
 
-    public void listenForMessages(Subscriber sub) {
+    public void listenForMessages(Subscriber sub) throws SubscriberNotFoundException {
         Message message = PublisherService.messageQueue.poll();
 
         while (message != null) {
@@ -38,7 +39,7 @@ public class SubscriberService {
             while (!success && retries < MAX_RETRIES) {
                 Optional<Subscriber> subscriber = subscriberRepository.findByName(sub.getName());
                 if (subscriber.isEmpty()) {
-                    throw new NullPointerException("subscriber not found");
+                    throw new SubscriberNotFoundException("subscriber not found");
                 }
                 try {
                         Subscriber existSub = subscriber.get();
