@@ -9,20 +9,16 @@ import java.util.Date;
 
 @Data
 @Entity
-@Table(name = "messages")
-public class Message {
+@Table(name = "payloads")
+public class Payload {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "payload_id")
-    private Payload payload;
+    private String type;
 
-    @ManyToOne
-    @JoinColumn(name = "subscriber_id")
-    private Subscriber subscriber;
+    private String data;
 
     @CreationTimestamp
     private Date created;

@@ -1,6 +1,7 @@
 package com.app.publishsubscribe.Controller;
 
 import com.app.publishsubscribe.domain.Message;
+import com.app.publishsubscribe.domain.Payload;
 import com.app.publishsubscribe.domain.Subscriber;
 import com.app.publishsubscribe.service.PubSubService;
 import org.springframework.beans.factory.annotation.Value;
@@ -45,7 +46,7 @@ public class PubSubController {
     }
 
     @PostMapping("/messages")
-    public ResponseEntity<String> addMessageToQueue(@RequestHeader("apiKey") String apiKey, @RequestBody Object payload) {
+    public ResponseEntity<String> addMessageToQueue(@RequestHeader("apiKey") String apiKey, @RequestBody Payload payload) {
         pubSubService.addMessageToQueue(payload);
         return unauthorized(apiKey, HttpStatus.CREATED);
     }

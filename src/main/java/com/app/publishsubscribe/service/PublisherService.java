@@ -4,7 +4,6 @@ import com.app.publishsubscribe.domain.Message;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -12,20 +11,25 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class PublisherService {
 
     public static BlockingQueue<Message> messageQueue = new LinkedBlockingQueue<>();
+    private final BlockingQueue<Message> messageSchedule = new LinkedBlockingQueue<>();
 
     @Scheduled(fixedRate = 5000)
     public void scheduleMessagePublishing() {
-        Message message = generateMessage();
-        try {
-            messageQueue.put(message);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        if (!messageSchedule.isEmpty()) {
+            Message message = messageSchedule.poll();
+            try {
+                messageQueue.put(message);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 
-    private Message generateMessage() {
-        Message message = new Message();
-        message.setPayload("Random message: " + UUID.randomUUID());
-        return message;
+    public void setMessageSchedule(Message message) {
+        try {
+            this.messageSchedule.put(message);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }

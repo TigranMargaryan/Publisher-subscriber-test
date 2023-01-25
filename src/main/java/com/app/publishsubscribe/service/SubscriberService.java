@@ -1,8 +1,10 @@
 package com.app.publishsubscribe.service;
 
 import com.app.publishsubscribe.domain.Message;
+import com.app.publishsubscribe.domain.Payload;
 import com.app.publishsubscribe.domain.Subscriber;
 import com.app.publishsubscribe.repository.MessageRepository;
+import com.app.publishsubscribe.repository.PayloadRepository;
 import com.app.publishsubscribe.repository.SubscriberRepository;
 import lombok.Data;
 import org.slf4j.Logger;
@@ -22,9 +24,14 @@ public class SubscriberService {
 
     private final MessageRepository messageRepository;
 
-    public SubscriberService(SubscriberRepository subscriberRepository, MessageRepository messageRepository) {
+    private final PayloadRepository payloadRepository;
+
+    public SubscriberService(SubscriberRepository subscriberRepository,
+                             MessageRepository messageRepository,
+                             PayloadRepository payloadRepository) {
         this.subscriberRepository = subscriberRepository;
         this.messageRepository = messageRepository;
+        this.payloadRepository = payloadRepository;
     }
 
     public void addSubscriber(Subscriber subscriber) {
@@ -47,6 +54,8 @@ public class SubscriberService {
                     Optional<Subscriber> subscriber = subscriberRepository.findByName(sub.getName());
                     if (subscriber.isPresent()) {
                         Subscriber existSub = subscriber.get();
+                        Payload payload = message.getPayload();
+                        payloadRepository.save(payload);
                         message.setSubscriber(existSub);
                         messageRepository.save(message);
                         subscriberRepository.save(existSub);

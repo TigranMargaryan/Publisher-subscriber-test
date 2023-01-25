@@ -10,6 +10,7 @@
             SET foreign_key_checks = 0;
             DROP TABLE IF EXISTS `publishers`;
             DROP TABLE IF EXISTS `subscribers`;
+            DROP TABLE IF EXISTS `payloads`;
             DROP TABLE IF EXISTS `messages`;
             SET foreign_key_checks = 1;
         </sql>
@@ -44,14 +45,32 @@
             </column>
         </createTable>
 
+        <createTable tableName="payloads">
+            <column name="id" type="INT" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="type" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="data" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
         <createTable tableName="messages">
             <column name="id" type="INT" autoIncrement="true">
                 <constraints primaryKey="true"/>
             </column>
-            <column name="payload" type="LONGVARCHAR">
+            <column name="subscriber_id" type="INT">
                 <constraints nullable="false"/>
             </column>
-            <column name="subscriber_id" type="INT">
+            <column name="payload_id" type="INT">
                 <constraints nullable="false"/>
             </column>
             <column name="created" type="TIMESTAMP">
@@ -65,6 +84,12 @@
                                  baseColumnNames="subscriber_id"
                                  constraintName="MESSAGE_SUBSCRIBER_FK"
                                  referencedTableName="subscribers"
+                                 referencedColumnNames="id"
+                                 onUpdate="CASCADE"/>
+        <addForeignKeyConstraint baseTableName="messages"
+                                 baseColumnNames="payload_id"
+                                 constraintName="MESSAGE_PAYLOAD_FK"
+                                 referencedTableName="payloads"
                                  referencedColumnNames="id"
                                  onUpdate="CASCADE"/>
 

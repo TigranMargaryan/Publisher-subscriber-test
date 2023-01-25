@@ -1,6 +1,7 @@
 package com.app.publishsubscribe.service;
 
 import com.app.publishsubscribe.domain.Message;
+import com.app.publishsubscribe.domain.Payload;
 import com.app.publishsubscribe.domain.Subscriber;
 import com.app.publishsubscribe.repository.MessageRepository;
 import com.app.publishsubscribe.repository.SubscriberRepository;
@@ -63,10 +64,10 @@ public class PubSubService {
         return messages;
     }
 
-    public void addMessageToQueue(Object payload) {
+    public void addMessageToQueue(Payload payload) {
         Message message = new Message();
         message.setPayload(payload);
-        publisherService.messageQueue.offer(message);
+        publisherService.setMessageSchedule(message);
     }
 
     private Date convertStringToDate(String date) {
