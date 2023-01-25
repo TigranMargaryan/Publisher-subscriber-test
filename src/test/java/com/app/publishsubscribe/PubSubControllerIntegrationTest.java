@@ -1,7 +1,6 @@
 package com.app.publishsubscribe;
 
-import com.app.publishsubscribe.domain.Payload;
-import com.app.publishsubscribe.domain.Subscriber;
+import com.app.publishsubscribe.domain.*;
 import org.junit.After;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
