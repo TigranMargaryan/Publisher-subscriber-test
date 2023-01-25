@@ -2,14 +2,13 @@ package com.app.publishsubscribe.service;
 
 import com.app.publishsubscribe.domain.*;
 import com.app.publishsubscribe.repository.*;
-import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.*;
 import org.springframework.stereotype.Service;
 import java.util.Optional;
 
-
-@Data
 @Service
+@RequiredArgsConstructor
 public class SubscriberService {
     private static final Logger LOGGER = LoggerFactory.getLogger(SubscriberService.class);
 
@@ -20,14 +19,6 @@ public class SubscriberService {
     private final MessageRepository messageRepository;
 
     private final PayloadRepository payloadRepository;
-
-    public SubscriberService(SubscriberRepository subscriberRepository,
-                             MessageRepository messageRepository,
-                             PayloadRepository payloadRepository) {
-        this.subscriberRepository = subscriberRepository;
-        this.messageRepository = messageRepository;
-        this.payloadRepository = payloadRepository;
-    }
 
     public void addSubscriber(Subscriber subscriber) {
         subscriberRepository.save(subscriber);

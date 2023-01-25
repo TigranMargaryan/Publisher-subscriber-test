@@ -5,7 +5,7 @@ import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import java.util.*;
 
-@ControllerAdvice
+@RestControllerAdvice
 public class ExceptionsHandler {
 
     private static final Logger LOG = LoggerFactory.getLogger(ExceptionsHandler.class);

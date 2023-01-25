@@ -1,7 +1,8 @@
-package com.app.publishsubscribe.Controller;
+package com.app.publishsubscribe.controller;
 
 import com.app.publishsubscribe.domain.*;
 import com.app.publishsubscribe.service.PubSubService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api")
 public class PubSubController {
 
@@ -16,10 +18,6 @@ public class PubSubController {
 
     @Value("${apiKey}")
     private String API_KEY;
-
-    public PubSubController(PubSubService pubSubService) {
-        this.pubSubService = pubSubService;
-    }
 
     @GetMapping("/subscribers/{id}/messages")
     public ResponseEntity<List<Message>> getMessagesForSubscriber(

@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import java.time.LocalDate;
 import java.util.*;
 
 @Entity
@@ -21,10 +22,10 @@ public class Subscriber {
     private List<Message> messages;
 
     @CreationTimestamp
-    private Date created;
+    private LocalDate created;
 
     @UpdateTimestamp
-    private Date updated;
+    private LocalDate updated;
 
     public long getId() {
         return id;
@@ -50,19 +51,19 @@ public class Subscriber {
         this.messages = messages;
     }
 
-    public Date getCreated() {
+    public LocalDate getCreated() {
         return created;
     }
 
-    public void setCreated(Date created) {
+    public void setCreated(LocalDate created) {
         this.created = created;
     }
 
-    public Date getUpdated() {
+    public LocalDate getUpdated() {
         return updated;
     }
 
-    public void setUpdated(Date updated) {
+    public void setUpdated(LocalDate updated) {
         this.updated = updated;
     }
 }

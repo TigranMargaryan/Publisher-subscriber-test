@@ -3,8 +3,7 @@ package com.app.publishsubscribe.domain;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-
-import java.util.Date;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "payloads")
@@ -19,10 +18,10 @@ public class Payload {
     private String data;
 
     @CreationTimestamp
-    private Date created;
+    private LocalDate created;
 
     @UpdateTimestamp
-    private Date updated;
+    private LocalDate updated;
 
     public long getId() {
         return id;
@@ -48,19 +47,19 @@ public class Payload {
         this.data = data;
     }
 
-    public Date getCreated() {
+    public LocalDate getCreated() {
         return created;
     }
 
-    public void setCreated(Date created) {
+    public void setCreated(LocalDate created) {
         this.created = created;
     }
 
-    public Date getUpdated() {
+    public LocalDate getUpdated() {
         return updated;
     }
 
-    public void setUpdated(Date updated) {
+    public void setUpdated(LocalDate updated) {
         this.updated = updated;
     }
 }
