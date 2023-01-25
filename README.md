@@ -13,7 +13,7 @@ The application consists of three main components:
 `PubSubController`: Responsible for handling the API endpoints for adding and removing subscribers, and fetching messages for a subscriber.
 
 ##API Endpoints
-###Add subscriber
+### Add subscriber
 `/api/subscribers`
 
 `POST`: Adds a new subscriber to the system.
@@ -25,14 +25,14 @@ Request Body:
   "name": "TestName"
 }
 ```
-###Delete subscriber
+### Delete subscriber
 `/api/subscribers/{id}`
 
 `DELETE`: Removes a subscriber from the system.
 
 id -> subscriber id
 
-###Get all messages for subscriber
+### Get all messages for subscriber
 `/api/subscribers/{id}/messages`
 
 GET: Fetches all messages for a subscriber.
@@ -46,7 +46,7 @@ Params:
   "pageSize": "10"
 }
 ```
-###Message
+### Message
 
 `/api/messages`
 
@@ -61,7 +61,7 @@ Request Body:
 }
 ```
 
-###Broadcast messages
+### Broadcast messages
 `/api/messages/broadcast`
 
 `POST` Broadcast messages for subscribers
@@ -74,12 +74,12 @@ Request Body:
 }
 ```
 
-###Note
+### Note
 The API is protected with an API key, which must be included in the request header as `apiKey`. Like  `header-key` `apiKey` && `header-value` `secretKey`
 
-###Main profile is `dev`
+### Main profile is `dev`
 
-####for full configuration inside the envirement variables need to add some values
+#### For full configuration inside the envirement variables need to add some values
 
 `MYSQL_DB_USERNAME` = {mysql username};
 
@@ -87,10 +87,10 @@ The API is protected with an API key, which must be included in the request head
 
 `apiKey`= {secret key}
 
-##Integration Test
+## Integration Test
 Integration tests for the application can be found in the `src/test/java/com/example/publishsubscribe` package. 
 
-##Steps to work with application
+## Steps to work with application
 
 1. First need to create the subscriber
 2. Need to create messages (after that every 5 second created messages will be added in the queue, but not in the database)
@@ -98,4 +98,4 @@ Integration tests for the application can be found in the `src/test/java/com/exa
 4. With get messages endpoint it will get by default 5 messages for subscriber
 5. Delete subscriber
 
-####Inside `postman-script` directory you can find created endpoints, which can be imported into the postman app 
+#### Inside `postman-script` directory you can find created endpoints, which can be imported into the postman app 
