@@ -63,12 +63,12 @@ public class SubscriberService {
                         LOGGER.info("Successfully saved message: " + existSub.getName() + " " + message.getPayload());
                     }
                 } catch (Exception e) {
-                    System.out.println(e.getMessage());
+                    LOGGER.error(e.getMessage());
                     retries++;
                 }
             }
             if (!success) {
-                System.out.println("The message could not be processed after MAX_RETRIES retries");
+                LOGGER.info("The message could not be processed after MAX_RETRIES retries");
             }
             message = PublisherService.messageQueue.poll();
         }
