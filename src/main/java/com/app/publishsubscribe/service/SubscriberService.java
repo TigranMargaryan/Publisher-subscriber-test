@@ -50,9 +50,11 @@ public class SubscriberService {
             boolean success = false;
             int retries = 0;
             while (!success && retries < MAX_RETRIES) {
+                Optional<Subscriber> subscriber = subscriberRepository.findByName(sub.getName());
+                if (subscriber.isEmpty()) {
+                    throw new NullPointerException("subscriber not found");
+                }
                 try {
-                    Optional<Subscriber> subscriber = subscriberRepository.findByName(sub.getName());
-                    if (subscriber.isPresent()) {
                         Subscriber existSub = subscriber.get();
                         Payload payload = message.getPayload();
                         payloadRepository.save(payload);
@@ -61,7 +63,6 @@ public class SubscriberService {
                         subscriberRepository.save(existSub);
                         success = true;
                         LOGGER.info("Successfully saved message: " + existSub.getName() + " " + message.getPayload());
-                    }
                 } catch (Exception e) {
                     LOGGER.error(e.getMessage());
                     retries++;
