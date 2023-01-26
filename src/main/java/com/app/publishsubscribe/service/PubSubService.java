@@ -27,8 +27,8 @@ public class PubSubService {
         subscriberService.removeSubscriber(subscriberId);
     }
 
-    public void broadcastMessages(Subscriber subscriber) throws SubscriberNotFoundException {
-        subscriberService.listenForMessages(subscriber);
+    public void broadcastMessages(Long id) throws SubscriberNotFoundException {
+        subscriberService.listenForMessages(id);
     }
 
     public List<Message> getMessagesForSubscriber(Long id, String sort, String createdDate, Integer pageNo, Integer pageSize) {

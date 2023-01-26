@@ -46,10 +46,10 @@ public class PubSubController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    @PostMapping("/broadcasts")
-    public ResponseEntity<String> broadcastMessages(@RequestHeader("apiKey") String apiKey, @RequestBody Subscriber subscriber) {
+    @PostMapping("/broadcasts/{id}")
+    public ResponseEntity<String> broadcastMessages(@RequestHeader("apiKey") String apiKey, @PathVariable Long id) {
         checkAuthorization(apiKey);
-        pubSubService.broadcastMessages(subscriber);
+        pubSubService.broadcastMessages(id);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 

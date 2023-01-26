@@ -31,7 +31,7 @@ public class PublisherService {
         try {
             this.messageSchedule.put(message);
         } catch (InterruptedException e) {
-            log.error("Error when trying to add message: " + e.getMessage());
+            log.error("Error when trying to add message: {}", e.getMessage());
         }
     }
 }

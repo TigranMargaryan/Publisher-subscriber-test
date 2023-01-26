@@ -8,7 +8,7 @@ public class StaticTestData {
     public static final String API_KEY_VALUE = "123456test";
     public static final String URL_ADD_MESSAGE = "/api/messages";
     public static final String URL_ADD_SUBSCRIBER = "/api/subscribers";
-    public static final String URL_ADD_BROADCAST = "/api/broadcasts";
+    public static final String URL_ADD_BROADCAST = "/api/broadcast";
 
     public static String getSubscriberUrl(String id) {
         return "/api/subscribers/"+ id +"/messages";

@@ -1,5 +1,6 @@
 package com.app.publishsubscribe.service;
 
+import com.app.publishsubscribe.config.exception.EmptyMessageQueueException;
 import com.app.publishsubscribe.config.exception.SubscriberNotFoundException;
 import com.app.publishsubscribe.domain.*;
 import com.app.publishsubscribe.repository.*;
@@ -26,30 +27,29 @@ public class SubscriberService {
     }
 
     public void removeSubscriber(Long subscriberId) {
+        checkSubscriber(subscriberId);
         subscriberRepository.deleteById(subscriberId);
     }
 
-    public void listenForMessages(Subscriber sub) throws SubscriberNotFoundException {
+    public void listenForMessages(Long id) throws SubscriberNotFoundException {
+        Subscriber subscriber = checkSubscriber(id);
         Message message = PublisherService.MESSAGE_QUEUE.poll();
+        if (message == null) {
+            throw new EmptyMessageQueueException("Message queue was empty");
+        }
 
         while (message != null) {
-
             boolean success = false;
             int retries = 0;
             while (!success && retries < MAX_RETRIES) {
-                Optional<Subscriber> subscriber = subscriberRepository.findByName(sub.getName());
-                if (subscriber.isEmpty()) {
-                    throw new SubscriberNotFoundException("subscriber not found");
-                }
                 try {
-                        Subscriber existSub = subscriber.get();
                         Payload payload = message.getPayload();
                         payloadRepository.save(payload);
-                        message.setSubscriber(existSub);
+                        message.setSubscriber(subscriber);
                         messageRepository.save(message);
-                        subscriberRepository.save(existSub);
+                        subscriberRepository.save(subscriber);
                         success = true;
-                        log.info("Successfully saved message: " + existSub.getName() + " " + message.getPayload());
+                        log.info("Successfully saved message for subscriber: {}", subscriber.getName());
                 } catch (Exception e) {
                     log.error(e.getMessage());
                     retries++;
@@ -60,5 +60,13 @@ public class SubscriberService {
             }
             message = PublisherService.MESSAGE_QUEUE.poll();
         }
+    }
+
+    private Subscriber checkSubscriber(Long id) {
+        Optional<Subscriber> subscriber = subscriberRepository.findById(id);
+        if (subscriber.isEmpty()) {
+            throw new SubscriberNotFoundException("subscriber not found");
+        }
+        return subscriber.get();
     }
 }
