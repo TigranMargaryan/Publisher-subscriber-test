@@ -1,17 +1,17 @@
 package com.app.publishsubscribe.service;
 
 import com.app.publishsubscribe.domain.Message;
-import org.slf4j.*;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.concurrent.*;
 
+@Log4j2
 @Service
 public class PublisherService {
-    private static final Logger LOGGER = LoggerFactory.getLogger(PublisherService.class);
 
-    public static BlockingQueue<Message> messageQueue = new LinkedBlockingQueue<>();
+    public static final BlockingQueue<Message> MESSAGE_QUEUE = new LinkedBlockingQueue<>();
     private final BlockingQueue<Message> messageSchedule = new LinkedBlockingQueue<>();
 
     @Scheduled(fixedRate = 5000)
@@ -19,8 +19,8 @@ public class PublisherService {
         if (!messageSchedule.isEmpty()) {
             Message message = messageSchedule.poll();
             try {
-                messageQueue.put(message);
-                LOGGER.info("Added message into the queue");
+                MESSAGE_QUEUE.put(message);
+                log.info("Added message into the queue");
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -31,7 +31,7 @@ public class PublisherService {
         try {
             this.messageSchedule.put(message);
         } catch (InterruptedException e) {
-            LOGGER.error("Error when trying to add message: " + e.getMessage());
+            log.error("Error when trying to add message: " + e.getMessage());
         }
     }
 }

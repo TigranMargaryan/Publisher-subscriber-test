@@ -4,14 +4,14 @@ import com.app.publishsubscribe.config.exception.SubscriberNotFoundException;
 import com.app.publishsubscribe.domain.*;
 import com.app.publishsubscribe.repository.*;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.*;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import java.util.Optional;
 
+@Log4j2
 @Service
 @RequiredArgsConstructor
 public class SubscriberService {
-    private static final Logger LOGGER = LoggerFactory.getLogger(SubscriberService.class);
 
     private static final Integer MAX_RETRIES = 5;
 
@@ -30,7 +30,7 @@ public class SubscriberService {
     }
 
     public void listenForMessages(Subscriber sub) throws SubscriberNotFoundException {
-        Message message = PublisherService.messageQueue.poll();
+        Message message = PublisherService.MESSAGE_QUEUE.poll();
 
         while (message != null) {
 
@@ -49,16 +49,16 @@ public class SubscriberService {
                         messageRepository.save(message);
                         subscriberRepository.save(existSub);
                         success = true;
-                        LOGGER.info("Successfully saved message: " + existSub.getName() + " " + message.getPayload());
+                        log.info("Successfully saved message: " + existSub.getName() + " " + message.getPayload());
                 } catch (Exception e) {
-                    LOGGER.error(e.getMessage());
+                    log.error(e.getMessage());
                     retries++;
                 }
             }
             if (!success) {
-                LOGGER.info("The message could not be processed after MAX_RETRIES retries");
+                log.info("The message could not be processed after MAX_RETRIES retries");
             }
-            message = PublisherService.messageQueue.poll();
+            message = PublisherService.MESSAGE_QUEUE.poll();
         }
     }
 }
