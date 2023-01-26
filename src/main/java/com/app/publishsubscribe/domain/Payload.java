@@ -13,8 +13,10 @@ public class Payload {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
+    @Column(name = "type", nullable = false)
     private String type;
 
+    @Column(name = "data", nullable = false)
     private String data;
 
     @CreationTimestamp

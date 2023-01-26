@@ -18,7 +18,7 @@ public class Message {
     private Payload payload;
 
     @ManyToOne
-    @JoinColumn(name = "subscriber_id")
+    @JoinColumn(name = "subscriber_id", nullable = false)
     private Subscriber subscriber;
 
     @CreationTimestamp

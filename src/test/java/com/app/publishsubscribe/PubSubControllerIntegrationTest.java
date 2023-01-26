@@ -1,122 +1,110 @@
 package com.app.publishsubscribe;
 
-import com.app.publishsubscribe.domain.*;
-import org.junit.After;
-import org.junit.jupiter.api.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.hamcrest.Matchers;
+import org.junit.*;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.runner.RunWith;
+import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.*;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import java.util.Objects;
-
+import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 import static com.app.publishsubscribe.StaticTestData.*;
-import static org.junit.jupiter.api.Assertions.*;
 
+@RunWith(SpringRunner.class)
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = PublishSubscribeApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class PubSubControllerIntegrationTest {
 
-    @LocalServerPort
-    private int port;
-
     @Autowired
-    private JdbcTemplate jdbcTemplate;
+    private WebApplicationContext webApplicationContext;
+    private MockMvc mockMvc;
 
-    TestRestTemplate restTemplate = new TestRestTemplate();
-
-    HttpHeaders headers = new HttpHeaders();
-
-    @Test
-    @Order(1)
-    public void addSubscriberTest() {
-        HttpEntity<Subscriber> entity = new HttpEntity<>(addSubscriber(), headers);
-
-        ResponseEntity<String> response = restTemplate.exchange(
-                createURLWithPort(URL_ADD_SUBSCRIBER),
-                HttpMethod.POST, entity, String.class);
-
-        assertEquals(response.getStatusCode(), HttpStatus.CREATED);
+    @Before
+    public void setUp() {
+        mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
     }
 
     @Test
-    @Order(2)
-    public void addMessageToQueueTest() throws InterruptedException {
-        headers.add(API_KEY, API_KEY_VALUE);
-        HttpEntity<Payload> entity1 = new HttpEntity<>(addPayload1(), headers);
-        ResponseEntity<String> response1 = restTemplate.exchange(
-                createURLWithPort(URL_ADD_MESSAGE),
-                HttpMethod.POST, entity1, String.class);
+    public void TestACreateSubscriber() throws Exception {
+        this.mockMvc
+                .perform(MockMvcRequestBuilders.post(URL_ADD_SUBSCRIBER)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(asJsonString(StaticTestData.addSubscriber())))
+                .andExpect(MockMvcResultMatchers.status().isCreated());
+    }
+
+    @Test
+    public void TestBAddMessageToQueue() throws Exception {
+        this.mockMvc
+                .perform(MockMvcRequestBuilders.post(URL_ADD_MESSAGE)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(API_KEY, API_KEY_VALUE)
+                        .content(asJsonString(addPayload1())))
+                .andExpect(MockMvcResultMatchers.status().isCreated());
         Thread.sleep(5000);
-        HttpEntity<Payload> entity2 = new HttpEntity<>(addPayload2(), headers);
-        ResponseEntity<String> response2 = restTemplate.exchange(
-                createURLWithPort(URL_ADD_MESSAGE),
-                HttpMethod.POST, entity2, String.class);
+        this.mockMvc
+                .perform(MockMvcRequestBuilders.post(URL_ADD_MESSAGE)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(API_KEY, API_KEY_VALUE)
+                        .content(asJsonString(addPayload2())))
+                .andExpect(MockMvcResultMatchers.status().isCreated());
         Thread.sleep(5000);
-        HttpEntity<Payload> entity3 = new HttpEntity<>(addPayload3(), headers);
-        ResponseEntity<String> response3 = restTemplate.exchange(
-                createURLWithPort(URL_ADD_MESSAGE),
-                HttpMethod.POST, entity3, String.class);
+        this.mockMvc
+                .perform(MockMvcRequestBuilders.post(URL_ADD_MESSAGE)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(API_KEY, API_KEY_VALUE)
+                        .content(asJsonString(addPayload3())))
+                .andExpect(MockMvcResultMatchers.status().isCreated());
         Thread.sleep(5000);
-        assertEquals(response1.getStatusCode(), HttpStatus.CREATED);
-        assertEquals(response2.getStatusCode(), HttpStatus.CREATED);
-        assertEquals(response3.getStatusCode(), HttpStatus.CREATED);
     }
 
     @Test
-    @Order(3)
-    public void broadcastMessagesTest() {
-        headers.add(API_KEY, API_KEY_VALUE);
-        HttpEntity<Subscriber> entityBroadcast = new HttpEntity<>(addSubscriber(), headers);
-
-        ResponseEntity<String> responseBroadcast = restTemplate.exchange(
-                createURLWithPort(URL_ADD_BROADCAST),
-                HttpMethod.POST, entityBroadcast, String.class);
-
-        assertEquals(responseBroadcast.getStatusCode(), HttpStatus.CREATED);
+    public void TestCBroadcastMessages() throws Exception {
+        this.mockMvc
+                .perform(MockMvcRequestBuilders.post(URL_ADD_BROADCAST)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(API_KEY, API_KEY_VALUE)
+                        .content(asJsonString(StaticTestData.addSubscriber())))
+                .andExpect(MockMvcResultMatchers.status().isCreated());
     }
 
     @Test
-    @Order(4)
-    public void getMessagesForSubscriberTest() {
-        headers.add(API_KEY, API_KEY_VALUE);
-        HttpEntity<String> entity = new HttpEntity<>(null, headers);
-
-        ResponseEntity<String> response = restTemplate.exchange(
-                createURLWithPort(getSubscriberUrl("1")),
-                HttpMethod.GET, entity, String.class);
-
-        assertEquals(response.getStatusCode(), HttpStatus.OK);
-        assertTrue(Objects.requireNonNull(response.getBody()).contains(addPayload1().getData()));
-        assertTrue(Objects.requireNonNull(response.getBody()).contains(addPayload2().getData()));
-        assertTrue(Objects.requireNonNull(response.getBody()).contains(addPayload3().getData()));
+    public void TestDGetMessagesForSubscriber() throws Exception {
+        this.mockMvc
+                .perform( MockMvcRequestBuilders
+                        .get(getSubscriberUrl("1"))
+                        .header(API_KEY, API_KEY_VALUE)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.hasSize(3)));
     }
 
     @Test
-    @Order(5)
-    public void removeSubscriber() {
-        headers.add(API_KEY, API_KEY_VALUE);
-        HttpEntity<Subscriber> entityBroadcast = new HttpEntity<>(null, headers);
-
-        ResponseEntity<String> responseBroadcast = restTemplate.exchange(
-                createURLWithPort(getRemoveSubscriberUrl("1")),
-                HttpMethod.DELETE, entityBroadcast, String.class);
-
-        assertEquals(responseBroadcast.getStatusCode(), HttpStatus.NO_CONTENT);
+    public void TestERemoveSubscriber() throws Exception {
+        this.mockMvc
+                .perform(MockMvcRequestBuilders
+                        .delete(getRemoveSubscriberUrl("1"))
+                        .header(API_KEY, API_KEY_VALUE)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isNoContent());
     }
 
-    private String createURLWithPort(String uri) {
-        return "http://localhost:" + port + uri;
-    }
-
-    @After
-    public void afterTest() {
-        jdbcTemplate.execute("DROP DATABASE " + "publish_subscribe_test");
+    private String asJsonString(final Object obj) {
+        try {
+            return new ObjectMapper().writeValueAsString(obj);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }
